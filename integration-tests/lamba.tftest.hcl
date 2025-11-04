@@ -1,17 +1,21 @@
 run "lambda_create_function" {
-  module {
-    source = "./simulation"
-  }
-
   variables {
-    role_arn      = "arn:aws:iam::${var.aws_account_id}:role/${var.role_name}"
-    action_names  = ["lambda:CreateFunction"]
-    resource_arns = ["arn:aws:lambda:${var.aws_region}:${var.aws_account_id}:function:test-function"]
-    context       = { namePrefix = "test" }
+    actions = [
+      "lambda:CreateFunction"
+    ]
+    resources = [
+      "arn:aws:lambda:${var.aws_region}:${var.aws_account_id}:function:test-function"
+    ]
+    context = [
+      {
+        key   = "aws:PrincipalTag/DeployNamePrefix"
+        value = "test"
+      }
+    ]
   }
 
   assert {
-    condition     = output.allowed
+    condition     = data.aws_iam_principal_policy_simulation.test.all_allowed
     error_message = "Cannot create Lambda function"
   }
 }
