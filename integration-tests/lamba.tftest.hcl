@@ -4,7 +4,7 @@ run "lambda_create_function" {
       "lambda:CreateFunction"
     ]
     resources = [
-      "arn:aws:lambda:${var.aws_region}:${var.aws_account_id}:function:test-function"
+      "arn:aws:lambda:${var.region}:${var.account_id}:function:test-function"
     ]
     context = [
       {

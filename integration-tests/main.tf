@@ -6,11 +6,11 @@ terraform {
   }
 }
 
-variable "aws_account_id" {
+variable "account_id" {
   type = string
 }
 
-variable "aws_region" {
+variable "region" {
   type = string
 }
 
@@ -35,7 +35,7 @@ variable "context" {
 }
 
 data "aws_iam_principal_policy_simulation" "test" {
-  policy_source_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.role_name}"
+  policy_source_arn = "arn:aws:iam::${var.account_id}:role/${var.role_name}"
   action_names      = var.actions
   resource_arns     = var.resources
 
