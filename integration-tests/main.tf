@@ -11,7 +11,8 @@ variable "account_id" {
 }
 
 variable "region" {
-  type = string
+  type    = string
+  default = "us-east-1"
 }
 
 variable "role_name" {
@@ -19,11 +20,13 @@ variable "role_name" {
 }
 
 variable "actions" {
-  type = list(string)
+  type    = list(string)
+  default = []
 }
 
 variable "resources" {
-  type = list(string)
+  type    = list(string)
+  default = []
 }
 
 variable "context" {
@@ -32,6 +35,7 @@ variable "context" {
     type  = optional(string)
     value = string
   }))
+  default = []
 }
 
 data "aws_iam_principal_policy_simulation" "test" {

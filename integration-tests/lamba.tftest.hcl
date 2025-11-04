@@ -1,4 +1,4 @@
-run "lambda_create_function" {
+run "lambda_create_function_pass" {
   variables {
     actions = [
       "lambda:CreateFunction"
@@ -15,7 +15,23 @@ run "lambda_create_function" {
   }
 
   assert {
-    condition     = data.aws_iam_principal_policy_simulation.test.all_allowed
+    condition     = data.aws_iam_principal_policy_simulation.test.all_allowed == true
     error_message = "Cannot create Lambda function"
+  }
+}
+
+run "lambda_create_function_fail" {
+  variables {
+    actions = [
+      "lambda:CreateFunction"
+    ]
+    resources = [
+      "arn:aws:lambda:${var.region}:${var.account_id}:function:test-function"
+    ]
+  }
+
+  assert {
+    condition     = data.aws_iam_principal_policy_simulation.test.all_allowed == false
+    error_message = "Should not have created Lambda function"
   }
 }
