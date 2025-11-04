@@ -27,12 +27,15 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: ChatGptSuggestedSomethingThatLooksLikeAHallucination
-            Effect: Allow
-            Action: "lambda:CreateFunction"
-            Resource: "*"
+          # Allow all Lambda actions
+          - Effect: Allow
+            Action: lambda:*
+            Resource:
+              Fn::Sub: 'arn:aws:lambda:*:${AWS::AccountId}:function:${!aws:PrincipalTag/DeployNamePrefix}*'
             Condition:
               "Null":
                 aws:PrincipalTag/DeployNamePrefix: "false"
-              "StringLike":
-                lambda:FunctionName: ${aws:PrincipalTag/DeployNamePrefix}*
+          # Except Invoke*
+          - Effect: Deny
+            Action: lambda:Invoke*
+            Resource: '*'

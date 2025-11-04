@@ -7,11 +7,12 @@ Parameters:
     Description: Which stage is this deploying to?
 
 Resources:
+
   TestDeployRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName:
-        Fn::Sub: ${AWS::StackName}-deploy-role
+        Fn::Sub: ${AWS::StackName}-test-deploy-role
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -32,3 +33,29 @@ Resources:
         - Key: DeployTagValue
           Value:
             Fn::Sub: ${AWS::StackName}
+
+  TestExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: ${AWS::StackName}-test-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - ecs-tasks.amazonaws.com
+                - ecs.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Tags:
+        - Key: DeployNamePrefix
+          Value: test
+        - Key: DeployTagKey
+          Value: TestKey
+        - Key: DeployTagValue
+          Value: TestValue
