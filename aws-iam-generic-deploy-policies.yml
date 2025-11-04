@@ -6,9 +6,9 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName:
-        Fn::Sub: ${AWS::StackName}-Policy1
+        Fn::Sub: ${AWS::StackName}-policy1
       Description:
-        Fn::Sub: ${AWS::StackName}-Policy1 - Generic read permissions
+        Fn::Sub: ${AWS::StackName}-policy1 - Generic read permissions
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -21,9 +21,9 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName:
-        Fn::Sub: ${AWS::StackName}-Policy2
+        Fn::Sub: ${AWS::StackName}-policy2
       Description:
-        Fn::Sub: ${AWS::StackName}-Policy2 - Lambda
+        Fn::Sub: ${AWS::StackName} (Policy2) Lambda
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -32,7 +32,7 @@ Resources:
             Action: "lambda:CreateFunction"
             Resource: "*"
             Condition:
-              Null:
-                "aws:PrincipalTag/LambdaFnPrefix": "false"
-              StringLike:
-                "lambda:FunctionName": "${aws:PrincipalTag/LambdaFnPrefix}*"
+              "Null":
+                aws:PrincipalTag/DeployNamePrefix: "false"
+              "StringLike":
+                lambda:FunctionName: ${aws:PrincipalTag/DeployNamePrefix}*

@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Generic Deploy Role to test Generic Deploy Policies from https://github.com/someimportantcompany/aws-iam-generic-deploy-role-policy
+
+Parameters:
+  DeployPolicyPrefix:
+    Type: String
+    Description: Which stage is this deploying to?
+
+Resources:
+  TestDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: ${AWS::StackName}-deploy-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                Fn::Sub: arn:aws:iam::${AWS::AccountId}:root
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${DeployPolicyPrefix}-policy1
+        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${DeployPolicyPrefix}-policy2
+      Tags:
+        - Key: DeployNamePrefix
+          Value:
+            Fn::Sub: ${AWS::StackName}
+        - Key: DeployTagKey
+          Value: Application
+        - Key: DeployTagValue
+          Value:
+            Fn::Sub: ${AWS::StackName}
