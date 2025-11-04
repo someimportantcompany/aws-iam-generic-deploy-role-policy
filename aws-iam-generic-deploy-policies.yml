@@ -2,13 +2,13 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: IAM Generic Deploy Policies from https://github.com/someimportantcompany/aws-iam-generic-deploy-role-policy
 Resources:
 
-  GenericPolicy1Read:
+  GenericPolicy1:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName:
         Fn::Sub: ${AWS::StackName}-policy1
       Description:
-        Fn::Sub: ${AWS::StackName}-policy1 - Generic read permissions
+        Fn::Sub: ${AWS::StackName} (Policy 1) Generic read permissions
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -17,13 +17,13 @@ Resources:
               - "ec2:Describe*"
             Resource: "*"
 
-  GenericPolicy2Create:
+  GenericPolicy2:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName:
         Fn::Sub: ${AWS::StackName}-policy2
       Description:
-        Fn::Sub: ${AWS::StackName} (Policy2) Lambda
+        Fn::Sub: ${AWS::StackName} (Policy 2) Lambda
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
