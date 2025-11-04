@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: IAM Generic Deploy Policies from https://github.com/someimportantcompany/aws-iam-generic-deploy-role-policy
+Resources:
+
+  GenericPolicy1Read:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName:
+        Fn::Sub: ${AWS::StackName}-Policy1
+      Description:
+        Fn::Sub: ${AWS::StackName}-Policy1 - Generic read permissions
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "ec2:Describe*"
+            Resource: "*"
+
+  GenericPolicy2Create:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName:
+        Fn::Sub: ${AWS::StackName}-Policy2
+      Description:
+        Fn::Sub: ${AWS::StackName}-Policy2 - Lambda
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: ChatGptSuggestedSomethingThatLooksLikeAHallucination
+            Effect: Allow
+            Action: "lambda:CreateFunction"
+            Resource: "*"
+            Condition:
+              Null:
+                "aws:PrincipalTag/LambdaFnPrefix": "false"
+              StringLike:
+                "lambda:FunctionName": "${aws:PrincipalTag/LambdaFnPrefix}*"
