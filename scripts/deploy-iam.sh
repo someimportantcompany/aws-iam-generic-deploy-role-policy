@@ -49,6 +49,10 @@ if [ "$ARG_DESTROY" = "true" ]; then
   throw_err "$?" "Failed: aws cloudformation delete-stack ($ARG_PREFIX-execution-test-policies)"
   echo "[Deleted] $ARG_PREFIX-execution-test-policies"
 
+  aws cloudformation delete-stack --stack-name $ARG_PREFIX-deploy-full-role | cat
+  throw_err "$?" "Failed: aws cloudformation delete-stack ($ARG_PREFIX-deploy-full-role)"
+  echo "[Deleted] $ARG_PREFIX-deploy-full-role"
+
   aws cloudformation delete-stack --stack-name $ARG_PREFIX-deploy-test-role | cat
   throw_err "$?" "Failed: aws cloudformation delete-stack ($ARG_PREFIX-deploy-test-role)"
   echo "[Deleted] $ARG_PREFIX-deploy-test-role"
@@ -59,18 +63,25 @@ if [ "$ARG_DESTROY" = "true" ]; then
 else
   aws cloudformation deploy \
     --stack-name $ARG_PREFIX-deploy-policies \
-    --template-file ../generic-deploy-policy/generic-deploy-policies.yml \
+    --template-file ../generic-deploy-policies/generic-deploy-policies.yml \
     --parameter-overrides PolicyPrefix=$ARG_PREFIX-deploy \
     --capabilities CAPABILITY_NAMED_IAM
   throw_err "$?" "Failed: aws cloudformation deploy ($ARG_PREFIX-deploy-policies)"
 
   aws cloudformation deploy \
     --stack-name $ARG_PREFIX-deploy-test-role \
-    --template-file ../generic-deploy-policy/integration-tests/test-role.yml \
+    --template-file ../generic-deploy-policies/integration-tests/test-role.yml \
     --parameter-overrides RoleName=$ARG_PREFIX-deploy-test-role PolicyPrefix=$ARG_PREFIX-deploy \
       DeployNamePrefix=test- DeployTagKey=Application DeployTagValue=test \
     --capabilities CAPABILITY_NAMED_IAM
   throw_err "$?" "Failed: aws cloudformation deploy ($ARG_PREFIX-deploy-test-role)"
+
+  aws cloudformation deploy \
+    --stack-name $ARG_PREFIX-deploy-full-role \
+    --template-file ../generic-deploy-role/generic-deploy-role.yml \
+    --parameter-overrides RoleName=$ARG_PREFIX-deploy-full-role \
+    --capabilities CAPABILITY_NAMED_IAM
+  throw_err "$?" "Failed: aws cloudformation deploy ($ARG_PREFIX-deploy-full-role)"
 
   aws cloudformation deploy \
     --stack-name $ARG_PREFIX-execution-test-policies \

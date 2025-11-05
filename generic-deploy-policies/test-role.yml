@@ -1,6 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Generic Test Roles to test Generic Deploy Policies from https://github.com/someimportantcompany/aws-iam-generic-deploy-role-policy
 
+# This is an example of a template you can use to bootstrap your own Deployment roles
+# But you should use your own IaC tool to create lots of roles for each of your applications/services
+# Instead of using this for production - this creates one role at a time
+
 Parameters:
   RoleName:
     Type: String
