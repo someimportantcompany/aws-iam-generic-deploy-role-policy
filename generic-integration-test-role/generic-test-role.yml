@@ -1,0 +1,205 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: IAM Generic Integration Test Role from https://github.com/someimportantcompany/aws-iam-generic-roles
+
+Parameters:
+  RolePrefix:
+    Type: String
+  PolicyPrefix:
+    Type: String
+    Default: ''
+
+Conditions:
+  IsPolicyPrefixEmpty: { Fn::Equals: [{ Ref: PolicyPrefix }, ''] }
+
+Resources:
+
+  IntegrationTestPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName:
+        Fn::Sub:
+          - ${Prefix}-integration-test-policy
+          - Prefix: { Fn::If: [IsPolicyPrefixEmpty, { Ref: RolePrefix }, { Ref: PolicyPrefix }] }
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+
+              # API-Gateway
+              - apigateway:GET
+              - execute-api:Invoke
+
+              # App Config
+              - appconfig:GetConfiguration
+              - appconfig:StartConfigurationSession
+              - appconfig:GetLatestConfiguration
+
+              # AppSync
+              - appsync:GraphQL
+
+              # Athena
+              - athena:BatchGetQueryExecution
+              - athena:GetDatabase
+              - athena:GetQueryExecution
+              - athena:GetQueryResults
+              - athena:GetTableMetadata
+              - athena:ListDatabases
+              - athena:ListQueryExecutions
+              - athena:ListTableMetadata
+              - athena:StartQueryExecution
+              - athena:StopQueryExecution
+
+              # Cloudfront
+              - cloudfront:GetDistribution
+              - cloudfront:GetInvalidation
+
+              # Cloudwatch
+              - cloudwatch:GetMetricData
+              - cloudwatch:GetMetricStatistics
+              - cloudwatch:ListMetrics
+              - logs:DescribeLogGroups
+              - logs:DescribeLogStreams
+              - logs:FilterLogEvents
+              - logs:GetLogEvents
+              - logs:GetQueryResults
+              - logs:StartQuery
+
+              # Cognito
+              - cognito-idp:AdminGetUser
+              - cognito-idp:AdminInitiateAuth
+              - cognito-idp:GetUser
+              - cognito-idp:InitiateAuth
+
+              # DynamoDB
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:UpdateItem
+
+              # Elasticache
+              - elasticache:Connect
+              - memorydb:Connect
+
+              # ECR
+              - ecr:BatchGetImage
+              - ecr:DescribeImages
+              - ecr:GetDownloadUrlForLayer
+
+              # EventBridge
+              - events:ListEventBuses
+              - events:ListRules
+              - events:PutEvents
+
+              # Glue
+              - glue:GetDatabase
+              - glue:GetDatabases
+              - glue:GetPartition
+              - glue:GetPartitions
+              - glue:GetTable
+              - glue:GetTables
+
+              # Kinesis
+              - firehose:PutRecord
+              - firehose:PutRecordBatch
+              - kinesis:PutRecord
+              - kinesis:PutRecords
+
+              # KMS
+              - kms:DescribeKey
+              - kms:Decrypt
+              - kms:Encrypt
+              - kms:GenerateDataKey*
+
+              # Lambda
+              - lambda:InvokeFunction
+              - lambda:InvokeFunctionUrl
+
+              # Opensearch
+              - aoss:APIAccessAll
+              - es:ESHttpGet
+              - es:ESHttpPost
+
+              # Parameter Store
+              - ssm:GetParameter
+              - ssm:GetParameters
+              - ssm:GetParametersByPath
+              - ssm:DescribeParameters
+
+              # RDS
+              - rds-data:BatchExecuteStatement
+              - rds-data:BeginTransaction
+              - rds-data:CommitTransaction
+              - rds-data:ExecuteStatement
+              - rds-data:ListDatabases
+              - rds-data:ListSchemas
+              - rds-data:ListTables
+              - rds-data:RollbackTransaction
+              - rds:DescribeDBClusters
+              - rds:DescribeDBInstances
+
+              # S3
+              - s3:DeleteObject
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:PutObject
+
+              # Secrets Manager
+              - secretsmanager:DescribeSecret
+              - secretsmanager:GetResourcePolicy
+              - secretsmanager:GetSecretValue
+              - secretsmanager:ListSecrets
+
+              # SES
+              - ses:GetSendStatistics
+              - ses:SendEmail
+              - ses:SendRawEmail
+
+              # SNS
+              - sns:GetSubscriptionAttributes
+              - sns:GetTopicAttributes
+              - sns:ListSubscriptionsByTopic
+              - sns:ListTopics
+              - sns:Publish
+              - sns:Subscribe
+              - sns:Unsubscribe
+
+              # SQS
+              - sqs:ChangeMessageVisibility
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+              - sqs:ListQueues
+              - sqs:ListQueueTags
+              - sqs:PurgeQueue
+              - sqs:ReceiveMessage
+              - sqs:SendMessage
+
+              # Step Functions
+              - states:DescribeExecution
+              - states:DescribeStateMachine
+              - states:GetExecutionHistory
+              - states:ListExecutions
+              - states:ListStateMachines
+              - states:StartExecution
+
+            Resource: '*'
+
+  IntegrationTestRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: ${Prefix}-integration-test-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS:
+                Fn::Sub: arn:aws:iam::${AWS::AccountId}:root
+      ManagedPolicyArns:
+        - Ref: IntegrationTestPolicy
