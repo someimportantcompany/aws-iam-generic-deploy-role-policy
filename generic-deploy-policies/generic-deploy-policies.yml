@@ -42,3 +42,46 @@ Resources:
           - Effect: Deny
             Action: lambda:Invoke*
             Resource: '*'
+          # Allow all DynamoDB actions
+          - Effect: Allow
+            Action: dynamodb:*
+            Resource:
+              - Fn::Sub: 'arn:aws:dynamodb:*:${AWS::AccountId}:table:${!aws:PrincipalTag/DeployNamePrefix}*'
+              - Fn::Sub: 'arn:aws:dynamodb::${AWS::AccountId}:global-table:${!aws:PrincipalTag/DeployNamePrefix}*'
+            Condition:
+              "Null":
+                aws:PrincipalTag/DeployNamePrefix: "false"
+          # Except Invoke*
+          - Effect: Deny
+            Action: lambda:Invoke*
+            Resource: '*'
+
+  GenericPolicy3:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName:
+        Fn::Sub: ${PolicyPrefix}3
+      Description: (Policy 3) API-Gateway
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # Allow all API-Gateway actions where the resource is already tagged
+          - Effect: Allow
+            Action: apigateway:*
+            Resource: '*'
+            Condition:
+              StringEquals:
+                aws:ResourceTag/${!aws:PrincipalTag/DeployTagKey}: ${!aws:PrincipalTag/DeployTagValue}
+              "Null":
+                aws:PrincipalTag/DeployTagKey: "false"
+                aws:PrincipalTag/DeployTagValue: "false"
+          # Allow all API-Gateway create actions where the request is tagged
+          - Effect: Allow
+            Action: apigateway:POST
+            Resource: '*'
+            Condition:
+              StringEquals:
+                aws:RequestTag/${!aws:PrincipalTag/DeployTagKey}: ${!aws:PrincipalTag/DeployTagValue}
+              "Null":
+                aws:PrincipalTag/DeployTagKey: "false"
+                aws:PrincipalTag/DeployTagValue: "false"

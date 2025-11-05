@@ -23,9 +23,8 @@ There are two important ways these deployment policies work:
 
 ## Supported AWS Services
 
-| Service | Supported | Notes |
-| ---- | ---- | ---- |
-| `lambda` | Yes | |
+- API-Gateway
+- Lambda
 
 ## Deployment
 
