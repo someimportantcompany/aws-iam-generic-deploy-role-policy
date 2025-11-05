@@ -1,11 +1,9 @@
 # aws-iam-generic-roles
 
-Deploy applications/services to AWS using opinionated generic deployment policies.
+A collection of IAM deploy roles & policies for you & your team.
 
-These are available as Cloudformation templates, and are prefixed by the Cloudformation stack name.
-
-## AWS Services
-
-| Service | Supported | Notes |
-| ---- | ---- | ---- |
-| `lambda` | Yes | |
+| Name | Description |
+| ---- | ---- |
+| [`generic-deploy-policy`](./generic-deploy-policy) | A collection of IAM policies to build your own deployment roles. |
+| [`generic-execution-roles`](./generic-execution-roles) | A collection of standard IAM roles to get started with AWS services. |
+| [`generic-integration-test-role`](./generic-integration-test-role) | A standardised IAM policy & role to run integration tests against. |
