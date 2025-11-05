@@ -29,10 +29,7 @@ if [ -f ./.env.user ]; then
 fi
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-if [ "$?" -ne "0" ]; then
-  printf "[ERROR]: Failed to run: aws sts get-caller-identity\n" 1>&2
-  exit "1"
-fi
+throw_err "$?" "Failed to run: aws sts get-caller-identity"
 printf "\n"
 
 terraform init

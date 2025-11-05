@@ -2,7 +2,9 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Generic Test Roles to test Generic Deploy Policies from https://github.com/someimportantcompany/aws-iam-generic-deploy-role-policy
 
 Parameters:
-  DeployPolicyPrefix:
+  RoleName:
+    Type: String
+  PolicyPrefix:
     Type: String
   DeployNamePrefix:
     Type: String
@@ -17,7 +19,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName:
-        Fn::Sub: ${AWS::StackName}-test-deploy-role
+        Ref: RoleName
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -27,8 +29,8 @@ Resources:
                 Fn::Sub: arn:aws:iam::${AWS::AccountId}:root
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${DeployPolicyPrefix}-policy1
-        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${DeployPolicyPrefix}-policy2
+        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${PolicyPrefix}-policy1
+        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${PolicyPrefix}-policy2
       Tags:
         - Key: DeployNamePrefix
           Value:
@@ -39,22 +41,3 @@ Resources:
         - Key: DeployTagValue
           Value:
             Ref: DeployTagValue
-
-  TestExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName:
-        Fn::Sub: ${AWS::StackName}-test-execution-role
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-                - ecs-tasks.amazonaws.com
-                - ecs.amazonaws.com
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole

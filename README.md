@@ -1,4 +1,4 @@
-# aws-iam-generic-deploy-role-policy
+# aws-iam-generic-roles
 
 Deploy applications/services to AWS using opinionated generic deployment policies.
 
