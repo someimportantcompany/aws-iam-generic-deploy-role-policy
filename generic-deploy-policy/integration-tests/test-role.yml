@@ -25,12 +25,11 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS:
-                Fn::Sub: arn:aws:iam::${AWS::AccountId}:root
+              AWS: { Fn::Sub: "arn:aws:iam::${AWS::AccountId}:root" }
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${PolicyPrefix}-policy1
-        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${PolicyPrefix}-policy2
+        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${PolicyPrefix}1
+        - Fn::Sub: arn:aws:iam::${AWS::AccountId}:policy/${PolicyPrefix}2
       Tags:
         - Key: DeployNamePrefix
           Value:
