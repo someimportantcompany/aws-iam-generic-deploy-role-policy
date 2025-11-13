@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: IAM Generic Integration Test Role from https://github.com/someimportantcompany/aws-iam-generic-roles
+
+Parameters:
+  RolePrefix:
+    Type: String
+
+Resources:
+
+  # # ECSAppExecutionRole # #
+  # Not needed, ECS services without an execution role (not task execution role) will still execute fine
+  # Just without any permissions to AWS services, which should be bespoke roles anyway, never generic
+
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: ${RolePrefix}-ecs-task-execution-role
+      Description: >
+        Provides ECS access to other AWS service resources that are required to run ECS tasks
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: ${RolePrefix}-lambda-execution-role
+      Description: >
+        Provides Lambda write permissions to CloudWatch Logs
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
